@@ -3,56 +3,45 @@ import axios from "axios"
 
 
 function SoundAudioForm() {
-    const [songName, setSongName] = useState('');
-    const [authorName, setAuthorName] = useState('');
-    const [price, setPrice] = useState('');
-    const [mp3File, setMp3File] = useState(null);
+    const [name, setName] = useState('');
+    const [author, setAuthor] = useState('');
+    const [mp3File, setMp3File] = useState([]);
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setMp3File(file);
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append('songName', songName);
-        formData.append('authorName', authorName);
-        formData.append('price', price);
-        formData.append('mp3File', mp3File);
-
-        // Now, you can use Axios to send this formData to your backend
-        // Example Axios code:
-
-        axios.post('http://localhost:8080/api', formData)
-            .then((response) => {
-                alert("music added")
+        let formData = new FormData()
+        for (let key in mp3File) {
+            formData.append('music', mp3File[key])
+        }
+        formData.append('name', name)
+        formData.append('author', author)
+        await axios.post('http://localhost:8080/audio/newMusic', formData)
+            .then(() => {
+                alert("submitted successfully")
             })
-            .catch((error) => {
-
+            .catch(error => {
                 console.log(error)
-            });
+                alert("error occured")
+            })
+
 
     };
 
+
     return (
-        <form action='http://localhost:8080/upload' method='post' encType='multipart/form-data'>
+        <form onSubmit={handleSubmit}>
             <div>
                 <label>Song Name:</label>
-                <input type="text" value={songName} onChange={(e) => setSongName(e.target.value)} required />
+                <input type="text" name='name' onChange={(e) => setName(e.target.value)} required />
             </div>
             <div>
                 <label>Author Name:</label>
-                <input type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)} required />
-            </div>
-            <div>
-                <label>Price:</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required min="1" />
+                <input type="text" name='author' onChange={(e) => setAuthor(e.target.value)} required />
             </div>
             <div>
                 <label>Upload MP3 File:</label>
-                <input type="file" name='file' />
+                <input type="file" accept='.mp3' name='music' multiple="false" onChange={(e) => { setMp3File(e.target.files) }} />
             </div>
             <input value='submit' type="submit" />
         </form>
