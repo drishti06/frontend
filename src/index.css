@@ -16,3 +16,6 @@ a {
 ::-webkit-scrollbar {
   display: none;
 }
+::-webkit-file-upload-button {
+  visibility: hidden;
+}

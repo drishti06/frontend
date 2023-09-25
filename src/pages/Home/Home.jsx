@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
 import headphone from "../../images/headphone-dynamic-premium.png";
 import img1 from "../../images/img1.png";
@@ -10,11 +10,15 @@ import Swiperr from "../../components/Swiper/Swiperr";
 import Trial from "../../components/Trial/Trial";
 import MiniNav from "../../components/MiniNav/MiniNav";
 import Features from "../../components/Features/Features";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectLoggedInUser } from "../../features/auth/authSlice";
 
 const Home = () => {
   const isHomePage = true;
+  const user = useSelector(selectLoggedInUser)
+  console.log({ user })
+
   return (
     <>
       <div className="home">

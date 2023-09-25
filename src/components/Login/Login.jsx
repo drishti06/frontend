@@ -1,38 +1,31 @@
-import { React, useEffect, useState } from "react";
+import React from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { loginUserAsync, selectError, selectLoggedInUser } from '../../features/auth/authSlice';
 import "./Login.css";
 import loginImg from "../../images/loginImg.png";
 import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"
+import { Link, Navigate} from "react-router-dom";
+import { useForm } from 'react-hook-form';
 
 function Login() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const navigate = useNavigate()
+    const dispatch = useDispatch();
+    const error = useSelector(selectError);
+    const user = useSelector(selectLoggedInUser);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:8080/auth/login', {
-                email: email,
-                password: password,
-            })
-            if (response.status === 200) {
-                navigate('/')
-            }
-            else {
-                alert("please enter propert information")
-            }
-        }
-        catch (error) {
-            console.log('Error:', error.message);
-        }
-    }
     return (
         <>
-            {/* {response.status === 200 ? <Navigate to='/'></Navigate> : alert("enter proper details")} */}
+            {user && <Navigate to="/" replace={true}></Navigate>}
             <div className="loginPage">
-                <form onSubmit={handleSubmit}>
+                <form noValidate onSubmit={handleSubmit((data) => {
+                    dispatch(
+                        loginUserAsync({ email: data.email, password: data.password })
+                    );
+                })} className='signupPage'>
                     <div className="login-content">
                         <div className="login-left">
                             <img src={loginImg} alt="" />
@@ -41,7 +34,7 @@ function Login() {
                             <div className="login-logo">Logo</div>
                             <div className="google-login">
                                 <div>
-                                    <span>Login to your account</span>
+                                    <span>Signup your account</span>
                                     <span>See what is going on with your business</span>
                                 </div>
                                 <div className="google-login-button">
@@ -51,38 +44,47 @@ function Login() {
                                 </div>
                             </div>
                             <div className="or">
-                                <span>------- or login in with Email --------</span>
+                                <span>------- or sign in with Email --------</span>
                             </div>
                             <div className="login-inputs">
+
                                 <div className="email">
-                                    <label>Email</label>
-                                    <input onChange={(e) => setEmail(e.target.value)} name="email" type="text" placeholder="mail@abc.com" />
+                                    <label htmlFor="email">Email</label>
+                                    <input id="email"
+                                        {...register('email', {
+                                            required: 'email is required',
+                                            pattern: {
+                                                value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
+                                                message: 'email not valid',
+                                            },
+                                        })}
+                                        type="email"
+                                        placeholder="mail@abc.com" />
+                                    {errors.email && (
+                                        <p style={{ color: 'red', fontSize: '15px' }}>{errors.email.message}</p>
+                                    )}
                                 </div>
                                 <div className="password">
-                                    <label >Password</label>
-                                    <input onChange={(e) => setPassword(e.target.value)} name="password" type="password" placeholder="**********" />
+                                    <label>Password</label>
+                                    <input id="password"
+                                        {...register('password', {
+                                            required: 'password is required',
+                                        })}
+                                        type="password" placeholder="**********" />
+                                    {errors.password && (
+                                        <p style={{ color: 'red', fontSize: '15px' }}>{errors.password.message}</p>
+                                    )}
                                 </div>
-                                <div className="forgot-password">
-                                    <div>
-                                        <input type="checkbox" />
-                                        <span>Remember Me</span>
-                                    </div>
-                                    <span>
-                                        <Link to="#" style={{ color: "black" }}>
-                                            Forgot Password ?
-                                        </Link>
-                                    </span>
-                                </div>
-                                <input className="login-btn" type="submit" />
-                                <button >Search</button>
+
+                                <button type='submit' className="login-btn">Login</button>
                                 <div className="new-account">
-                                    <span>Not Regsistered Yet?</span>
-                                    <Link to="/signupPage" style={{ fontWeight: 600 }}>Create an account</Link>
+                                    <span>Don't have account?</span>
+                                    <Link to="/signupPage" style={{ fontWeight: 600 }}>Signup Account</Link>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </form>
+                </form >
             </div>
         </>
     );

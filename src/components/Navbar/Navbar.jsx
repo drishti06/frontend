@@ -1,9 +1,14 @@
 import React from "react";
 import "./Navbar.css";
 import { LuSearch } from "react-icons/lu";
-import { BrowserRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchLoggedInUserAsync, selectUserInfo } from "../../features/user/userSlice";
+import { selectLoggedInUser } from "../../features/auth/authSlice";
 
 const Navbar = () => {
+  const user = useSelector(selectLoggedInUser)
   return (
     <>
       <nav>
@@ -32,15 +37,20 @@ const Navbar = () => {
         </div>
         <div className="nav-right">
           <div className="nav-buttons">
-            <button>
-              <Link to="/loginPage" style={{ color: "white" }}>
-                Login
-              </Link>
-            </button>
-            <button>Try Free</button>
+            {user == null ?
+              <button>
+                <Link to="/loginPage" style={{ color: "white" }}>
+                  Login
+                </Link>
+              </button> :
+              <button>
+                <Link to='/logout' style={{ color: "white" }}>Logout</Link>
+              </button>
+            }
+            < button > Try Free</button>
           </div>
         </div>
-      </nav>
+      </nav >
     </>
   );
 };

@@ -1,8 +1,12 @@
 import React from "react";
 import "./SoundsArticle.css";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectLoggedInUser } from "../../features/auth/authSlice";
 
 const SoundsArticle = () => {
+  const userHere = useSelector(selectLoggedInUser)
+
   return (
     <article className="article">
       <div>
@@ -24,9 +28,10 @@ const SoundsArticle = () => {
           </Link>
         </span>
         <br />
-        <span>
+        {userHere != null ? <span>
           <Link to='/soundAudioForm' className="article-btn audio-btn">Add audio</Link>
-        </span>
+        </span> : <Link to='/loginPage' className="article-btn audio-btn">Add audio</Link>}
+
       </div>
     </article>
   );

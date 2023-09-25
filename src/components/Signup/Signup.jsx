@@ -1,44 +1,34 @@
-import React, { useState } from 'react'
+import React from 'react'
 import "./Signup.css"
 import loginImg from "../../images/loginImg.png";
 import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, Navigate } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import { selectLoggedInUser, createUserAsync } from '../../features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-function SignupPage() {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const navigate = useNavigate()
-
-
-    const handleSignup = async (e) => {
-        e.preventDefault()
-        try {
-            const response = await axios.post('http://localhost:8080/auth/register', {
-                username: username,
-                email: email,
-                password: password,
-                confirmPassword: confirmPassword,
-            });
-
-            if (response.status === 200) {
-                alert('Signup successful!');
-                navigate("/")
-            } else {
-                alert('Signup failed');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-
-    };
-
+const Signup = () => {
+    const dispatch = useDispatch();
+    const user = useSelector(selectLoggedInUser);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
     return (
         <>
-            <form noValidate onSubmit={handleSignup} className='signupPage'>
+            {user && <Navigate to={'/'} replace={true}></Navigate>}
+            <form noValidate onSubmit={handleSubmit((data) => {
+                dispatch(
+                    createUserAsync({
+                        email: data.email,
+                        password: data.password,
+                        addresses: [],
+                        role: 'user'
+                    })
+                );
+            })} className='signupPage'>
                 <div className="login-content">
                     <div className="login-left">
                         <img src={loginImg} alt="" />
@@ -61,22 +51,55 @@ function SignupPage() {
                         </div>
                         <div className="login-inputs">
                             <div className="email">
-                                <label htmlFor="email">Username</label>
-                                <input onChange={(e) => setUsername(e.target.value)} name="username" type="text" placeholder="User123" />
-                            </div>
-                            <div className="email">
                                 <label htmlFor="email">Email</label>
-                                <input onChange={(e) => setEmail(e.target.value)} name="email" type="text" placeholder="mail@abc.com" />
+                                <input id="email"
+                                    {...register('email', {
+                                        required: 'email is required',
+                                        pattern: {
+                                            value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
+                                            message: 'email not valid',
+                                        },
+                                    })}
+                                    type="email" placeholder="mail@abc.com" />
+                                {errors.email && (
+                                    <p style={{ color: 'red', fontSize: '15px' }}>{errors.email.message}</p>
+                                )}
+
                             </div>
                             <div className="password">
                                 <label>Password</label>
-                                <input onChange={(e) => setPassword(e.target.value)} name='password' type="text" placeholder="Password@11" />
+                                <input name='password' id="password"
+                                    {...register('password', {
+                                        required: 'password is required',
+                                        pattern: {
+                                            value:
+                                                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
+                                            message: `- at least 8 characters\n
+                                            - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number\n
+                                            - Can contain special characters`,
+                                        },
+                                    })}
+                                    type="password" placeholder="**********" />
+                                {errors.password && (
+                                    <p style={{ color: 'red', fontSize: '15px' }}>{errors.password.message}</p>
+                                )}
                             </div>
                             <div className="confirm-password">
                                 <label>Confirm Password</label>
-                                <input onChange={(e) => setConfirmPassword(e.target.value)} name='confirmPassword' type="password" placeholder="**********" />
+                                <input name='confirmPassword' id="confirmPassword"
+                                    {...register('confirmPassword', {
+                                        required: 'confirm password is required',
+                                        validate: (value, formValues) =>
+                                            value === formValues.password || 'password not matching',
+                                    })} type="password" placeholder="**********" />
+                                {errors.confirmPassword && (
+                                    <p style={{ color: 'red', fontSize: '15px' }}>
+                                        {errors.confirmPassword.message}
+                                    </p>
+                                )}
+
                             </div>
-                            <input type='submit' className="login-btn" value="SignUp" />
+                            <button type='submit' className="login-btn">Sign up</button>
                             <div className="new-account">
                                 <span>Already have account?</span>
                                 <Link to="/loginPage" style={{ fontWeight: 600 }}>Login Your Account</Link>
@@ -88,4 +111,5 @@ function SignupPage() {
         </>
     )
 }
-export default SignupPage;
+
+export default Signup
