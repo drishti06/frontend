@@ -23,9 +23,12 @@ const SoundsArticle = () => {
         </span>
         <br />
         <span>
-          <Link to="/mySounds" className="article-btn">
+          {
+            userHere && <Link to="/mySounds" className="article-btn">
             Your Sounds
           </Link>
+          }
+          
         </span>
         <br />
         {userHere != null ? <span>

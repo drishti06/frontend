@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import "./SoundsChart.css";
 import axios from 'axios';
+import { BsFillPlayFill, BsFillPauseFill,BsDownload } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
+import { selectLoggedInUser } from '../../features/auth/authSlice';
+
 
 function SoundsChart() {
     const [medias, setMedias] = useState([]);
     const [currentSong, setCurrentSong] = useState(null);
+    const user = useSelector(selectLoggedInUser)
 
     useEffect(() => {
         getAllMedias();
@@ -54,8 +59,9 @@ function SoundsChart() {
         const audioElement = document.getElementById(`audio-${index}`);
         return currentSong === index && !audioElement.paused;
     };
-
     return (
+        <div className='soundsChartsParent'>
+
         <div className='soundsChart'>
             <div className='chart-head'>
                 <span>Name</span>
@@ -64,12 +70,10 @@ function SoundsChart() {
             <div>
                 {medias &&
                     medias.map((media, index) => {
-                        const backgroundColor = index % 2 === 0 ? 'white' : '#E9E9E9';
+                        const backgroundColor = index % 2 === 0 ? 'rgb(200, 200, 200)' : '#E9E9E9';
                         return (
                             <div className='chart-contents' style={{ backgroundColor: backgroundColor }} key={index}>
-                                <div className='content-img'>
-                                    <img src="" alt="img" />
-                                </div>
+                               
                                 <div className='content-number'>
                                     <span className='number'>{index + 1}</span>
                                 </div>
@@ -81,15 +85,21 @@ function SoundsChart() {
                                     <audio id={`audio-${index}`} preload="none">
                                         <source src={`http://localhost:8080${media.music}`} type="audio/mp3" />
                                         Your browser does not support the audio element.
+
                                     </audio>
+                                        {
+                                          user &&  user.role==='admin' ?
+                                            <BsDownload style={{color:'blue', fontSize:'20px'}}/> : null
+                                        }
                                     <button className="play-button" onClick={() => playSong(index)}>
-                                        {isPlaying(index) ? 'Pause' : 'Play'}
+                                    {isPlaying && currentSong === index ? <BsFillPauseFill style={{color:'blue', fontSize:'20px'}} /> : <BsFillPlayFill style={{color:'blue', fontSize:'20px'}} />}
                                     </button>
                                 </div>
                             </div>
                         );
                     })}
             </div>
+        </div>
         </div>
     );
 }

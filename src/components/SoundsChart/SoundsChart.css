@@ -1,10 +1,15 @@
+.soundsChartsParent{
+  height: 50vh;
+}
+
 .chart-head{
     display: flex;
     align-items: center;
     justify-content: space-around;
     padding-top: 10px;
     padding-bottom: 10px;
-    color: rgb(153, 152, 152);
+    color: rgb(36, 36, 36);
+    background-color:rgb(153, 152, 152);
 }
 
 .chart-contents{
@@ -14,13 +19,6 @@
     justify-content: space-around;
     /* gap: 1rem; */
     /* padding: 5px; */
-}
-
-.content-img{
-    align-items: center;
-    justify-content: center;
-    width: 70px;
-    height: 100%;
 }
 
 .content-number{
@@ -58,7 +56,7 @@ audio {
 
 .play-button {
   padding: 8px 12px;
-  background-color: #007bff;
+  background-color: transparent ;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -66,5 +64,5 @@ audio {
 }
 
 .play-button:hover {
-  background-color: #0056b3;
+  background-color: transparent;
 }

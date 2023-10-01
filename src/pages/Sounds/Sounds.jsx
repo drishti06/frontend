@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useState } from "react";
 import "./Sounds.css";
 import MiniNav from "../../components/MiniNav/MiniNav";
 import SoundsImageSection from "../../components/SoundsImageSection/SoundsImageSection";

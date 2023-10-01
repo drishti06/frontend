@@ -34,6 +34,7 @@ function App() {
       dispatch(fetchLoggedInUserAsync)
     }
   }, [dispatch, user])
+  // console.log(user)
   return (
     <>
       <Navbar />
