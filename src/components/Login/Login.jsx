@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { loginUserAsync, selectError, selectLoggedInUser } from '../../features/auth/authSlice';
 import "./Login.css";
 import loginImg from "../../images/loginImg.png";
 import { FcGoogle } from "react-icons/fc";
+import {BsThreeDots} from "react-icons/bs"
 import { Link, Navigate} from "react-router-dom";
 import { useForm } from 'react-hook-form';
 
@@ -11,6 +12,7 @@ function Login() {
     const dispatch = useDispatch();
     const error = useSelector(selectError);
     const user = useSelector(selectLoggedInUser);
+    const [isLoading, setIsLoading] = useState(false); 
     const {
         register,
         handleSubmit,
@@ -21,12 +23,21 @@ function Login() {
         <>
             {user && <Navigate to="/" replace={true}></Navigate>}
             <div className="loginPage">
-                <form noValidate onSubmit={handleSubmit((data) => {
+                 <form noValidate onSubmit={handleSubmit((data) => {
+                    setIsLoading(true);
                     dispatch(
                         loginUserAsync({ email: data.email, password: data.password })
-                    );
+                    ).then(() => {
+                        setIsLoading(false); 
+                    });
                 })} className='signupPage'>
                     <div className="login-content">
+                        {isLoading ? (
+                            <div className="loader-container">
+                                <BsThreeDots style={{fontSize:'40px', color:'red', display:'flex', justifyContent:'center', alignItems:'center' , height:'80vh'}} />
+                            </div>
+                        ) : (
+                            <>
                         <div className="login-left">
                             <img src={loginImg} alt="" />
                         </div>
@@ -83,6 +94,8 @@ function Login() {
                                 </div>
                             </div>
                         </div>
+                        </>
+                        )}
                     </div>
                 </form >
             </div>

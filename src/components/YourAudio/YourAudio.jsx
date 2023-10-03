@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { selectLoggedInUser } from '../../features/auth/authSlice'
 import { BsFillPlayFill, BsFillPauseFill } from 'react-icons/bs';
 import axios from 'axios'
+import {Navigate} from "react-router-dom"
 
 const YourAudio = () => {
     const [yourMusic, setYourMusic] = useState([])
@@ -66,8 +67,15 @@ const YourAudio = () => {
     }
   
     return (
-        <div className='yourSounds'>
+        <>
+      { user  && <Navigate to='/'></Navigate>}
+         <div className='yourSounds'>
             <div>
+            <span style={{
+                fontSize:'30px',
+                fontWeight:'bold',
+                paddingBottom:'1rem'
+            }}>List of your songs/sounds</span>
             <div className='your-chart-head'>
                 <span>Name</span>
                 <span>Contents</span>
@@ -87,7 +95,7 @@ const YourAudio = () => {
                                     <span>{media.author}</span>
                                 </div>
                                 <div className="your-audio">
-                                    <audio id={`audio-${index}`} preload="none">
+                                    <audio id={`mus-${index}`} preload="none">
                                         <source src={`http://localhost:8080${media.music}`} type="audio/mp3" />
                                         Your browser does not support the audio element.
                                          <div>Time: {formatTime(yourMusic[index].duration)}</div>
@@ -103,6 +111,7 @@ const YourAudio = () => {
             </div>
         </div>
 
+        </>
     )
 }
 

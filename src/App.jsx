@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchLoggedInUserAsync } from "./features/user/userSlice";
 import { useEffect } from "react";
 import YourAudio from "./components/YourAudio/YourAudio";
+import FAQS from "./components/FAQS/FAQS";
 
 function App() {
   const location = useLocation();
@@ -49,6 +50,7 @@ function App() {
         <Route path="/signupPage" element={<SignupPage />} />
         <Route path="/soundAudioForm" element={<SoundAudioForm />} />
         <Route path="/mySounds" element={<YourAudio />} />
+        <Route path="/faqs" element={<FAQS/>} />
 
 
       </Routes>
