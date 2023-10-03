@@ -26,6 +26,12 @@ const SoundAudioForm = () => {
         await axios.post('http://localhost:8080/audio/create', formData)
             .then(() => {
                 alert("submitted successfully")
+                  setTimeout(()=>{
+                    setName('')
+                    setAuthor('')
+                },1000)
+                
+               
             })
             .catch(error => {
                 console.log(error)
@@ -40,7 +46,7 @@ const SoundAudioForm = () => {
 
     return (
         <>
-    {user===null && <Navigate to = "/loinPage" > </Navigate> }
+    {user===null && <Navigate to = "/loginPage" > </Navigate> }
     <form className='audioForm' onSubmit={handleSubmit}>
         <div>
             <h1 className='addAudio'>Add your Audio</h1>

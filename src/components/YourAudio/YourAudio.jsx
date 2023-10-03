@@ -5,10 +5,18 @@ import { selectLoggedInUser } from '../../features/auth/authSlice'
 import { BsFillPlayFill, BsFillPauseFill } from 'react-icons/bs';
 import axios from 'axios'
 import {Navigate} from "react-router-dom"
+import {MdDelete ,MdModeEditOutline} from "react-icons/md"
 
 const YourAudio = () => {
     const [yourMusic, setYourMusic] = useState([])
     const [currentSong, setCurrentSong] = useState(null);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editData, setEditData] = useState({
+        songName: '',
+        author: '',
+        id: null,
+    });
+
     const user = useSelector(selectLoggedInUser)
 
     useEffect( () => {
@@ -19,8 +27,7 @@ const YourAudio = () => {
         axios
         .post(`http://localhost:8080/audio/music/${user.id}`)
         .then((result) => {
-            setYourMusic(result.data);
-            
+            setYourMusic(result.data);            
         })
         .catch((error) => {
             setYourMusic([]);
@@ -30,27 +37,24 @@ const YourAudio = () => {
     }
     const playSong = (index) => {
         if (currentSong !== index) {
-            // If a different song is clicked, pause the current song if it's playing
             if (currentSong !== null) {
                 const currentAudio = document.getElementById(`mus-${currentSong}`);
                 currentAudio.pause();
-                currentAudio.currentTime = 0; // Reset playback position to the beginning
+                currentAudio.currentTime = 0; 
             }
             setCurrentSong(index);
-            document.getElementById(`mus-${index}`).play().catch(() => {
-                // Handle play error
+            document.getElementById(`mus-${index}`).play().catch((error) => {
+               consolelog(error.msg)
             });
         } else {
-            // If the same song is clicked again, toggle play/pause
             const audioElement = document.getElementById(`mus-${index}`);
             if (audioElement.paused) {
-                audioElement.play().catch(() => {
-                    // Handle play error
+                audioElement.play().catch((err) => {
+                    console.log(err.msg)
                 });
             } else {
                 audioElement.pause();
             }
-            // Toggle currentSong if it's the same song
             setCurrentSong(audioElement.paused ? null : index);
         }
     };
@@ -60,15 +64,53 @@ const YourAudio = () => {
         return currentSong === index && !audioElement.paused;
     };
 
-    function formatTime(timeInSeconds) {
-        const minutes = Math.floor(timeInSeconds / 60);
-        const seconds = Math.floor(timeInSeconds % 60);
-        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const handleEdit = (index) => {
+        const selectedMusic = yourMusic[index];
+        setEditData({
+            songName: selectedMusic.name,
+            author: selectedMusic.author,
+            id: selectedMusic._id,
+        });
+        setEditModalVisible(true);
+    };
+
+    const handleSubmitEdit = async () => {
+        try {
+            const response = await axios.patch(`http://localhost:8080/audio/editMusic/${editData.id}`, {
+                name: editData.songName,
+                author: editData.author,
+            });
+            if (response.status === 200) {
+                alert('Edited!')
+                setEditModalVisible(false);
+                yourAllMusic(); // Refresh the list after editing
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error editing music');
+        }
+    };
+    
+    const handleEditInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditData({ ...editData, [name]: value });
+    };
+
+  const deleteSong = async (musicId) => {
+    try {
+      await axios.delete(`http://localhost:8080/audio/deleteMusic/${musicId}`);
+      alert('Deleted successfully')
+      yourAllMusic();
+    } catch (error) {
+      console.error(error);
+      alert('Error deleting music');
     }
+  };
+
   
     return (
         <>
-      { user  && <Navigate to='/'></Navigate>}
+    
          <div className='yourSounds'>
             <div>
             <span style={{
@@ -98,15 +140,47 @@ const YourAudio = () => {
                                     <audio id={`mus-${index}`} preload="none">
                                         <source src={`http://localhost:8080${media.music}`} type="audio/mp3" />
                                         Your browser does not support the audio element.
-                                         <div>Time: {formatTime(yourMusic[index].duration)}</div>
                                     </audio>
+                                    <div className='your-sounds-btns'>
                                     <button className="play-button" onClick={() => playSong(index)}>
                                     {isPlaying && currentSong === index ? <BsFillPauseFill style={{color:'blue', fontSize:'20px'}} /> : <BsFillPlayFill style={{color:'blue', fontSize:'20px'}} />}
                                     </button>
+                                    <button className='edit-btn' onClick={() => handleEdit(index)}>
+                                    <MdModeEditOutline style={{ color: 'green', fontSize: '20px' }} />
+                                </button>
+                                    <button className='delete-btn'  onClick={() => deleteSong(media._id) } >
+                                        <MdDelete style={{color:'red' , fontSize:'20px' }} />
+                                    </button>
+                                   
+                                    </div>
                                 </div>
                             </div>
                         );
                     })}
+                {editModalVisible && (
+                <div className="edit-modal">
+                    <h2>Edit Song</h2>
+                    <label htmlFor="songName">Song Name</label>
+                    <input
+                        type="text"
+                        id="songName"
+                        name="songName"
+                        value={editData.songName}
+                        onChange={handleEditInputChange}
+                    />
+                    <label htmlFor="author">Author</label>
+                    <input
+                        type="text"
+                        id="author"
+                        name="author"
+                        value={editData.author}
+                        onChange={handleEditInputChange}
+                    />
+                    <button onClick={handleSubmitEdit}>Save</button>
+                    <button onClick={() => setEditModalVisible(false)}>Cancel</button>
+                </div>
+            )}
+
             </div>
             </div>
         </div>

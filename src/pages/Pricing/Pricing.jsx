@@ -15,7 +15,9 @@ const Pricing = () => {
       <PricingCard />
       <HowCompanyWorks />
       <Sample />
+      <br /><br />
       <InsipirationGenresPricing />
+      <br /><br /><br /><br /><br /><br /><br />
       <div className="feature-center">
         <Features />
       </div>
