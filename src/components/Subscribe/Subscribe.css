@@ -70,3 +70,8 @@
   color: white;
   font-size: 16px;
 }
+
+.subscribe-bottom > button:hover{
+  cursor: pointer;
+  scale: 1.1;
+}
