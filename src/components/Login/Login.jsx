@@ -34,7 +34,7 @@ function Login() {
                     <div className="login-content">
                         {isLoading ? (
                             <div className="loader-container">
-                                <BsThreeDots style={{fontSize:'40px', color:'red', display:'flex', justifyContent:'center', alignItems:'center' , height:'80vh'}} />
+                                <BsThreeDots style={{fontSize:'40px', color:'red', display:'flex', justifyContent:'center', alignItems:'center' }} />
                             </div>
                         ) : (
                             <>

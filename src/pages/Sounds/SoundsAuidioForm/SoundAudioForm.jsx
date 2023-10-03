@@ -29,9 +29,7 @@ const SoundAudioForm = () => {
                   setTimeout(()=>{
                     setName('')
                     setAuthor('')
-                },1000)
-                
-               
+                },1000)               
             })
             .catch(error => {
                 console.log(error)
@@ -60,7 +58,6 @@ const SoundAudioForm = () => {
             </div>
             <div className='formField'>
                 <label>Upload MP3 File:</label>
-                {/* <LiaFileAudioclassName='audioIcon' style={{ color: "white", fontSize: "20px" }} /> */}
                 <input type="file" accept='.mp3' name='music'onChange={handleMusic} />
 
             </div>
