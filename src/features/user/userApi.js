@@ -2,25 +2,30 @@ import axios from "axios";
 
 export function fetchLoggedInUser() {
     return new Promise(async (resolve) => {
-        const response = await axios.get('http://localhost:8080/users/own')
-        const data = await response.data
-        console.log(data)
-        resolve({ data })
+        try {
+            const response = await axios.get('import.meta.env.VITE_BASEURL/users/own')
+            const data = await response.data
+            console.log(data)
+            resolve({ data })
+
+        } catch (error) {
+            console.log(error)
+        }
+
     }
     );
 }
 
 export function updateUser(update) {
     return new Promise(async (resolve) => {
-        const response = await axios.patch('http://localhost:8080/users/' + update.id, update)
-            .then(() => {
-                console.log(response);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        const data = await response.data
-        resolve(data);
+        try {
+            const response = await axios.patch('import.meta.env.VITE_BASEURL/users/' + update.id, update)
+            const data = await response.data
+            resolve(data);
+        } catch (error) {
+            console.log(error)
+        }
+
     });
 }
 

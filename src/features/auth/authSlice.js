@@ -23,7 +23,6 @@ export const createUserAsync = createAsyncThunk(
     }
 );
 
-
 export const loginUserAsync = createAsyncThunk(
     'user/loginUser',
     async (loginInfo, { rejectWithValue }) => {
@@ -48,7 +47,7 @@ export const signOutAsync = createAsyncThunk(
 
 
 export const authSlice = createSlice({
-    name: 'user',
+    name: 'auth',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
